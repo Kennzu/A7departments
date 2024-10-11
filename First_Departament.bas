@@ -1,119 +1,119 @@
 Attribute VB_Name = "Module1"
-Sub РаспределитьЗаявки()
-    Dim wsСводная As Worksheet, wsТабель As Worksheet
-    Dim lastRowСводная As Long, lastRowТабель As Long, lastColТабель As Long
-    Dim выбраннаяДата As Variant
-    Dim присутствующие() As String
-    Dim руководители() As String
-    Dim countПрисутствующие As Long
-    Dim распределеноЗаявок As Long
-    Dim ФИО As String
-    Dim новыйЛист As Worksheet
-    Dim безопасноеИмя As String
+Sub вЂ“Р°СЃРїСЂРµРґРµР»РёС‚СЊВ«Р°в‚¬РІРєРё()
+    Dim wsвЂ”РІРѕРґРЅР°в‚¬ As Worksheet, wsвЂњР°Р±РµР»СЊ As Worksheet
+    Dim lastRowвЂ”РІРѕРґРЅР°в‚¬ As Long, lastRowвЂњР°Р±РµР»СЊ As Long, lastColвЂњР°Р±РµР»СЊ As Long
+    Dim РІС‹Р±СЂР°РЅРЅР°в‚¬Ж’Р°С‚Р° As Variant
+    Dim РїСЂРёСЃСѓС‚СЃС‚РІСѓСЋС‰РёРµ() As String
+    Dim СЂСѓРєРѕРІРѕРґРёС‚РµР»Рё() As String
+    Dim countС•СЂРёСЃСѓС‚СЃС‚РІСѓСЋС‰РёРµ As Long
+    Dim СЂР°СЃРїСЂРµРґРµР»РµРЅРѕВ«Р°в‚¬РІРѕРє As Long
+    Dim вЂВ»Сњ As String
+    Dim РЅРѕРІС‹Р№Р‹РёСЃС‚ As Worksheet
+    Dim Р±РµР·РѕРїР°СЃРЅРѕРµВ»Рјв‚¬ As String
     Dim i As Long, j As Long, k As Long
-    Dim currentСотрудник As Long
-    Dim заявкаУжеРаспределена As Boolean
+    Dim currentвЂ”РѕС‚СЂСѓРґРЅРёРє As Long
+    Dim Р·Р°в‚¬РІРєР°вЂќР¶РµвЂ“Р°СЃРїСЂРµРґРµР»РµРЅР° As Boolean
 
-    ' Запрос даты у пользователя
-    выбраннаяДата = InputBox("Введите дату для распределения заявок (в формате ДД.ММ.ГГГГ):", "Выбор даты")
-    If Not IsDate(выбраннаяДата) Then
-        MsgBox "Операция отменена пользователем или введена некорректная дата.", vbInformation
+    ' В«Р°РїСЂРѕСЃ РґР°С‚С‹ Сѓ РїРѕР»СЊР·РѕРІР°С‚РµР»в‚¬
+    РІС‹Р±СЂР°РЅРЅР°в‚¬Ж’Р°С‚Р° = InputBox("В¬РІРµРґРёС‚Рµ РґР°С‚Сѓ РґР»в‚¬ СЂР°СЃРїСЂРµРґРµР»РµРЅРёв‚¬ Р·Р°в‚¬РІРѕРє (РІ С„РѕСЂРјР°С‚Рµ Ж’Ж’.С›С›.в€љв€љв€љв€љ):", "В¬С‹Р±РѕСЂ РґР°С‚С‹")
+    If Not IsDate(РІС‹Р±СЂР°РЅРЅР°в‚¬Ж’Р°С‚Р°) Then
+        MsgBox "СњРїРµСЂР°С†Рёв‚¬ РѕС‚РјРµРЅРµРЅР° РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј РёР»Рё РІРІРµРґРµРЅР° РЅРµРєРѕСЂСЂРµРєС‚РЅР°в‚¬ РґР°С‚Р°.", vbInformation
         Exit Sub
     End If
-    выбраннаяДата = DateValue(выбраннаяДата)
+    РІС‹Р±СЂР°РЅРЅР°в‚¬Ж’Р°С‚Р° = DateValue(РІС‹Р±СЂР°РЅРЅР°в‚¬Ж’Р°С‚Р°)
 
-    ' Установка листов
-    Set wsСводная = ThisWorkbook.Sheets("СВОДНАЯ")
-    Set wsТабель = ThisWorkbook.Sheets("Табель Платежи")
+    ' вЂќСЃС‚Р°РЅРѕРІРєР° Р»РёСЃС‚РѕРІ
+    Set wsвЂ”РІРѕРґРЅР°в‚¬ = ThisWorkbook.Sheets("вЂ”В¬СњЖ’РЊССЏ")
+    Set wsвЂњР°Р±РµР»СЊ = ThisWorkbook.Sheets("вЂњР°Р±РµР»СЊ С•Р»Р°С‚РµР¶Рё")
 
-    ' Определение последних строк и столбцов
-    lastRowСводная = wsСводная.Cells(wsСводная.Rows.count, "A").End(xlUp).Row
-    lastRowТабель = wsТабель.Cells(wsТабель.Rows.count, "B").End(xlUp).Row
-    lastColТабель = wsТабель.Cells(1, wsТабель.Columns.count).End(xlToLeft).Column
+    ' СњРїСЂРµРґРµР»РµРЅРёРµ РїРѕСЃР»РµРґРЅРёС… СЃС‚СЂРѕРє Рё СЃС‚РѕР»Р±С†РѕРІ
+    lastRowвЂ”РІРѕРґРЅР°в‚¬ = wsвЂ”РІРѕРґРЅР°в‚¬.Cells(wsвЂ”РІРѕРґРЅР°в‚¬.Rows.count, "A").End(xlUp).Row
+    lastRowвЂњР°Р±РµР»СЊ = wsвЂњР°Р±РµР»СЊ.Cells(wsвЂњР°Р±РµР»СЊ.Rows.count, "B").End(xlUp).Row
+    lastColвЂњР°Р±РµР»СЊ = wsвЂњР°Р±РµР»СЊ.Cells(1, wsвЂњР°Р±РµР»СЊ.Columns.count).End(xlToLeft).Column
 
-    ' Собрать список присутствующих сотрудников и их руководителей
-    ReDim присутствующие(1 To lastRowТабель - 1)
-    ReDim руководители(1 To lastRowТабель - 1)
-    countПрисутствующие = 0
+    ' вЂ”РѕР±СЂР°С‚СЊ СЃРїРёСЃРѕРє РїСЂРёСЃСѓС‚СЃС‚РІСѓСЋС‰РёС… СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ Рё РёС… СЂСѓРєРѕРІРѕРґРёС‚РµР»РµР№
+    ReDim РїСЂРёСЃСѓС‚СЃС‚РІСѓСЋС‰РёРµ(1 To lastRowвЂњР°Р±РµР»СЊ - 1)
+    ReDim СЂСѓРєРѕРІРѕРґРёС‚РµР»Рё(1 To lastRowвЂњР°Р±РµР»СЊ - 1)
+    countС•СЂРёСЃСѓС‚СЃС‚РІСѓСЋС‰РёРµ = 0
 
-    For j = 3 To lastColТабель
-        If IsDate(wsТабель.Cells(1, j).Value) And DateValue(wsТабель.Cells(1, j).Value) = выбраннаяДата Then
-            For k = 2 To lastRowТабель
-                If wsТабель.Cells(k, j).Value = "Да" Then
-                    countПрисутствующие = countПрисутствующие + 1
-                    присутствующие(countПрисутствующие) = wsТабель.Cells(k, "B").Value ' Сохраняем ФИО сотрудника
-                    руководители(countПрисутствующие) = wsТабель.Cells(k, "A").Value ' Сохраняем имя руководителя
+    For j = 3 To lastColвЂњР°Р±РµР»СЊ
+        If IsDate(wsвЂњР°Р±РµР»СЊ.Cells(1, j).Value) And DateValue(wsвЂњР°Р±РµР»СЊ.Cells(1, j).Value) = РІС‹Р±СЂР°РЅРЅР°в‚¬Ж’Р°С‚Р° Then
+            For k = 2 To lastRowвЂњР°Р±РµР»СЊ
+                If wsвЂњР°Р±РµР»СЊ.Cells(k, j).Value = "Ж’Р°" Then
+                    countС•СЂРёСЃСѓС‚СЃС‚РІСѓСЋС‰РёРµ = countС•СЂРёСЃСѓС‚СЃС‚РІСѓСЋС‰РёРµ + 1
+                    РїСЂРёСЃСѓС‚СЃС‚РІСѓСЋС‰РёРµ(countС•СЂРёСЃСѓС‚СЃС‚РІСѓСЋС‰РёРµ) = wsвЂњР°Р±РµР»СЊ.Cells(k, "B").Value ' вЂ”РѕС…СЂР°РЅв‚¬РµРј вЂВ»Сњ СЃРѕС‚СЂСѓРґРЅРёРєР°
+                    СЂСѓРєРѕРІРѕРґРёС‚РµР»Рё(countС•СЂРёСЃСѓС‚СЃС‚РІСѓСЋС‰РёРµ) = wsвЂњР°Р±РµР»СЊ.Cells(k, "A").Value ' вЂ”РѕС…СЂР°РЅв‚¬РµРј РёРјв‚¬ СЂСѓРєРѕРІРѕРґРёС‚РµР»в‚¬
 
-                    безопасноеИмя = Application.WorksheetFunction.Substitute(руководители(countПрисутствующие), "/", " ")
+                    Р±РµР·РѕРїР°СЃРЅРѕРµВ»Рјв‚¬ = Application.WorksheetFunction.Substitute(СЂСѓРєРѕРІРѕРґРёС‚РµР»Рё(countС•СЂРёСЃСѓС‚СЃС‚РІСѓСЋС‰РёРµ), "/", " ")
                     On Error Resume Next
-                    Set новыйЛист = ThisWorkbook.Sheets(безопасноеИмя)
+                    Set РЅРѕРІС‹Р№Р‹РёСЃС‚ = ThisWorkbook.Sheets(Р±РµР·РѕРїР°СЃРЅРѕРµВ»Рјв‚¬)
                     On Error GoTo 0
 
-                    ' Создаем новый лист для руководителя, если он не существует
-                    If новыйЛист Is Nothing Then
-                        Set новыйЛист = ThisWorkbook.Sheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.count))
-                        новыйЛист.Name = безопасноеИмя
+                    ' вЂ”РѕР·РґР°РµРј РЅРѕРІС‹Р№ Р»РёСЃС‚ РґР»в‚¬ СЂСѓРєРѕРІРѕРґРёС‚РµР»в‚¬, РµСЃР»Рё РѕРЅ РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+                    If РЅРѕРІС‹Р№Р‹РёСЃС‚ Is Nothing Then
+                        Set РЅРѕРІС‹Р№Р‹РёСЃС‚ = ThisWorkbook.Sheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.count))
+                        РЅРѕРІС‹Р№Р‹РёСЃС‚.Name = Р±РµР·РѕРїР°СЃРЅРѕРµВ»Рјв‚¬
                     End If
 
-                    Set новыйЛист = Nothing
+                    Set РЅРѕРІС‹Р№Р‹РёСЃС‚ = Nothing
                 End If
             Next k
             Exit For
         End If
     Next j
 
-    If countПрисутствующие = 0 Then
-        MsgBox "На выбранную дату нет присутствующих сотрудников.", vbExclamation
+    If countС•СЂРёСЃСѓС‚СЃС‚РІСѓСЋС‰РёРµ = 0 Then
+        MsgBox "РЊР° РІС‹Р±СЂР°РЅРЅСѓСЋ РґР°С‚Сѓ РЅРµС‚ РїСЂРёСЃСѓС‚СЃС‚РІСѓСЋС‰РёС… СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ.", vbExclamation
         Exit Sub
     End If
 
-    If IsEmpty(wsСводная.Range("AY1").Value) Then
-        currentСотрудник = 1
+    If IsEmpty(wsвЂ”РІРѕРґРЅР°в‚¬.Range("AY1").Value) Then
+        currentвЂ”РѕС‚СЂСѓРґРЅРёРє = 1
     Else
-        currentСотрудник = wsСводная.Range("AY1").Value
-        If currentСотрудник < 1 Then currentСотрудник = 1
-        If currentСотрудник > countПрисутствующие Then currentСотрудник = 1
+        currentвЂ”РѕС‚СЂСѓРґРЅРёРє = wsвЂ”РІРѕРґРЅР°в‚¬.Range("AY1").Value
+        If currentвЂ”РѕС‚СЂСѓРґРЅРёРє < 1 Then currentвЂ”РѕС‚СЂСѓРґРЅРёРє = 1
+        If currentвЂ”РѕС‚СЂСѓРґРЅРёРє > countС•СЂРёСЃСѓС‚СЃС‚РІСѓСЋС‰РёРµ Then currentвЂ”РѕС‚СЂСѓРґРЅРёРє = 1
     End If
 
-    For i = 4 To lastRowСводная
-        Dim датаЗаявки As Variant
-        датаЗаявки = wsСводная.Cells(i, 1).Value
+    For i = 4 To lastRowвЂ”РІРѕРґРЅР°в‚¬
+        Dim РґР°С‚Р°В«Р°в‚¬РІРєРё As Variant
+        РґР°С‚Р°В«Р°в‚¬РІРєРё = wsвЂ”РІРѕРґРЅР°в‚¬.Cells(i, 1).Value
 
-        If IsDate(датаЗаявки) Then
-            If DateValue(датаЗаявки) = выбраннаяДата Then
-                If wsСводная.Cells(i, "Y").Value = "" Then
-                    ' Получаем имя руководителя из массива
-                    безопасноеИмя = Application.WorksheetFunction.Substitute(руководители(currentСотрудник), "/", " ")
+        If IsDate(РґР°С‚Р°В«Р°в‚¬РІРєРё) Then
+            If DateValue(РґР°С‚Р°В«Р°в‚¬РІРєРё) = РІС‹Р±СЂР°РЅРЅР°в‚¬Ж’Р°С‚Р° Then
+                If wsвЂ”РІРѕРґРЅР°в‚¬.Cells(i, "Y").Value = "" Then
+                    ' С•РѕР»СѓС‡Р°РµРј РёРјв‚¬ СЂСѓРєРѕРІРѕРґРёС‚РµР»в‚¬ РёР· РјР°СЃСЃРёРІР°
+                    Р±РµР·РѕРїР°СЃРЅРѕРµВ»Рјв‚¬ = Application.WorksheetFunction.Substitute(СЂСѓРєРѕРІРѕРґРёС‚РµР»Рё(currentвЂ”РѕС‚СЂСѓРґРЅРёРє), "/", " ")
                     On Error Resume Next
-                    Set новыйЛист = ThisWorkbook.Sheets(безопасноеИмя)
+                    Set РЅРѕРІС‹Р№Р‹РёСЃС‚ = ThisWorkbook.Sheets(Р±РµР·РѕРїР°СЃРЅРѕРµВ»Рјв‚¬)
                     On Error GoTo 0
 
-                    ' Проверяем, существует ли лист руководителя и не была ли заявка уже распределена
-                    If Not новыйЛист Is Nothing And Not IsEmpty(присутствующие(currentСотрудник)) Then
-                        заявкаУжеРаспределена = False
+                    ' С•СЂРѕРІРµСЂв‚¬РµРј, СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё Р»РёСЃС‚ СЂСѓРєРѕРІРѕРґРёС‚РµР»в‚¬ Рё РЅРµ Р±С‹Р»Р° Р»Рё Р·Р°в‚¬РІРєР° СѓР¶Рµ СЂР°СЃРїСЂРµРґРµР»РµРЅР°
+                    If Not РЅРѕРІС‹Р№Р‹РёСЃС‚ Is Nothing And Not IsEmpty(РїСЂРёСЃСѓС‚СЃС‚РІСѓСЋС‰РёРµ(currentвЂ”РѕС‚СЂСѓРґРЅРёРє)) Then
+                        Р·Р°в‚¬РІРєР°вЂќР¶РµвЂ“Р°СЃРїСЂРµРґРµР»РµРЅР° = False
                         Dim lastRowNew As Long
-                        lastRowNew = новыйЛист.Cells(новыйЛист.Rows.count, "A").End(xlUp).Row
+                        lastRowNew = РЅРѕРІС‹Р№Р‹РёСЃС‚.Cells(РЅРѕРІС‹Р№Р‹РёСЃС‚.Rows.count, "A").End(xlUp).Row
                         
-                        For j = 2 To lastRowNew ' Предполагаем, что первая строка - заголовок
-                            If новыйЛист.Cells(j, 3).Value = wsСводная.Cells(i, 2).Value Then
-                                заявкаУжеРаспределена = True
+                        For j = 2 To lastRowNew ' С•СЂРµРґРїРѕР»Р°РіР°РµРј, С‡С‚Рѕ РїРµСЂРІР°в‚¬ СЃС‚СЂРѕРєР° - Р·Р°РіРѕР»РѕРІРѕРє
+                            If РЅРѕРІС‹Р№Р‹РёСЃС‚.Cells(j, 3).Value = wsвЂ”РІРѕРґРЅР°в‚¬.Cells(i, 2).Value Then
+                                Р·Р°в‚¬РІРєР°вЂќР¶РµвЂ“Р°СЃРїСЂРµРґРµР»РµРЅР° = True
                                 Exit For
                             End If
                         Next j
 
-                        If Not заявкаУжеРаспределена Then
-                            ФИО = присутствующие(currentСотрудник)
-                            wsСводная.Cells(i, "X").Value = руководители(currentСотрудник) ' Руководитель
-                            wsСводная.Cells(i, "Y").Value = ФИО ' Сотрудник
+                        If Not Р·Р°в‚¬РІРєР°вЂќР¶РµвЂ“Р°СЃРїСЂРµРґРµР»РµРЅР° Then
+                            вЂВ»Сњ = РїСЂРёСЃСѓС‚СЃС‚РІСѓСЋС‰РёРµ(currentвЂ”РѕС‚СЂСѓРґРЅРёРє)
+                            wsвЂ”РІРѕРґРЅР°в‚¬.Cells(i, "X").Value = СЂСѓРєРѕРІРѕРґРёС‚РµР»Рё(currentвЂ”РѕС‚СЂСѓРґРЅРёРє) ' вЂ“СѓРєРѕРІРѕРґРёС‚РµР»СЊ
+                            wsвЂ”РІРѕРґРЅР°в‚¬.Cells(i, "Y").Value = вЂВ»Сњ ' вЂ”РѕС‚СЂСѓРґРЅРёРє
 
-                            распределеноЗаявок = распределеноЗаявок + 1
+                            СЂР°СЃРїСЂРµРґРµР»РµРЅРѕВ«Р°в‚¬РІРѕРє = СЂР°СЃРїСЂРµРґРµР»РµРЅРѕВ«Р°в‚¬РІРѕРє + 1
 
-                            With новыйЛист
+                            With РЅРѕРІС‹Р№Р‹РёСЃС‚
                                 Dim lastRowNewList As Long
                                 lastRowNewList = .Cells(.Rows.count, "A").End(xlUp).Row + 1
-                                .Cells(lastRowNewList, 1).Value = DateValue(датаЗаявки)
-                                .Cells(lastRowNewList, 2).Value = ФИО
-                                .Cells(lastRowNewList, 3).Value = wsСводная.Cells(i, 2).Value ' Номер заявки
+                                .Cells(lastRowNewList, 1).Value = DateValue(РґР°С‚Р°В«Р°в‚¬РІРєРё)
+                                .Cells(lastRowNewList, 2).Value = вЂВ»Сњ
+                                .Cells(lastRowNewList, 3).Value = wsвЂ”РІРѕРґРЅР°в‚¬.Cells(i, 2).Value ' РЊРѕРјРµСЂ Р·Р°в‚¬РІРєРё
                                 .Columns("A:C").AutoFit
                             End With
                         End If
@@ -122,14 +122,14 @@ Sub РаспределитьЗаявки()
             End If
         End If
 
-        ' Переключаемся на следующего сотрудника вне зависимости от результата
-        currentСотрудник = currentСотрудник + 1
-        If currentСотрудник > countПрисутствующие Then currentСотрудник = 1
+        ' С•РµСЂРµРєР»СЋС‡Р°РµРјСЃв‚¬ РЅР° СЃР»РµРґСѓСЋС‰РµРіРѕ СЃРѕС‚СЂСѓРґРЅРёРєР° РІРЅРµ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ СЂРµР·СѓР»СЊС‚Р°С‚Р°
+        currentвЂ”РѕС‚СЂСѓРґРЅРёРє = currentвЂ”РѕС‚СЂСѓРґРЅРёРє + 1
+        If currentвЂ”РѕС‚СЂСѓРґРЅРёРє > countС•СЂРёСЃСѓС‚СЃС‚РІСѓСЋС‰РёРµ Then currentвЂ”РѕС‚СЂСѓРґРЅРёРє = 1
     Next i
 
-    wsСводная.Range("AY1").Value = currentСотрудник
+    wsвЂ”РІРѕРґРЅР°в‚¬.Range("AY1").Value = currentвЂ”РѕС‚СЂСѓРґРЅРёРє
 
-    MsgBox "Распределено заявок: " & распределеноЗаявок & vbNewLine & _
-           "Присутствующих сотрудников: " & countПрисутствующие, vbInformation
+    MsgBox "вЂ“Р°СЃРїСЂРµРґРµР»РµРЅРѕ Р·Р°в‚¬РІРѕРє: " & СЂР°СЃРїСЂРµРґРµР»РµРЅРѕВ«Р°в‚¬РІРѕРє & vbNewLine & _
+           "С•СЂРёСЃСѓС‚СЃС‚РІСѓСЋС‰РёС… СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ: " & countС•СЂРёСЃСѓС‚СЃС‚РІСѓСЋС‰РёРµ, vbInformation
 End Sub
 
