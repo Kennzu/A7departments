@@ -7,12 +7,11 @@ Sub HighlightDuplicates()
     Dim i As Long
     
     ' Установите ссылку на активный лист
-    Set ws = ThisWorkbook.Sheets("Реестр") ' Замените "Sheet1" на имя вашего листа
+    Set ws = ThisWorkbook.Sheets("Реестр")
     
     ' Создаем коллекцию для хранения уникальных значений
     Set dict = New Collection
     
-    ' Определяем последний заполненный ряд в столбце A (или замените на нужный вам столбец)
     lastRow = ws.Cells(ws.Rows.Count, "D").End(xlUp).Row
     
     ' Сначала очищаем все предыдущие цвета
